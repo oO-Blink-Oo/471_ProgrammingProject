@@ -2,44 +2,42 @@ import socket
 import os
 import sys
 
-    
+
 serverAddr = sys.argv[1]
 serverPort = sys.argv[2]
 
 serverPort = int(serverPort, 10)
- 
+
 connSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 connSock.connect((serverAddr, serverPort))
 
 while True:
 
-	choice = input("ftp> ")
+    choice = input("ftp> ")
 
-	if choice == "quit":
-		break
+    if choice == "quit":
+        break
 
-	if "get" in choice:
-		fileName = choice[4:]
-		continue
+    if "get" in choice:
+        fileName = choice[4:]
+        continue
 
-	if "put" in choice:
+    if "put" in choice:
 
-		fileName = choice[4:]
-		
-		file = open(fileName, "rb")
+        fileName = choice[4:]
 
-		fileData = file.read(1024)
+        file = open(fileName, "rb")
 
-		connSock.send(fileData)
+        fileData = file.read(1024)
 
-		print ("File sent")
-	
-		file.close()
+        connSock.send(fileData)
 
-	if choice == "ls":
-		continue
+        print("File sent")
+
+        file.close()
+
+    if choice == "ls":
+        continue
 
 
 connSock.close()
-
-
