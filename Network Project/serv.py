@@ -6,39 +6,56 @@ listenPort = sys.argv[1]
 listenPort = int(listenPort, 10)
 
 welcomeSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
 welcomeSock.bind(('', listenPort))
-
 welcomeSock.listen(1)
-
 
 def recvAll(sock, numBytes):
 
-    recvBuff = ""
+	recvBuff = ""
+		
+	recvBuff = sock.recv(numBytes)
+	
+	return recvBuff
 
-    recvBuff = sock.recv(numBytes)
+while True:	
 
-    return recvBuff
-
-
-while True:
-
-    print("Waiting for connections...")
-
+    print ("Waiting for connections...")
+		
     clientSock, addr = welcomeSock.accept()
+	
+    print ("Accepted choice connection from client: ", addr)
+    print ("\n")
+	
+    choice = recvAll(clientSock, 8)
+    bput = "put".encode("utf-8")
 
-    print("Accepted connection from client: ", addr)
-    print("\n")
+    if bput in choice:
 
-    # Get the file data
-    fileData = recvAll(clientSock, 1024)
+        dataSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        dataSock.bind(('', 0))
+        
+        ePort = dataSock.getsockname()[1]
+        ePort = str(ePort).encode("utf-8")
 
-    print("The file data is: ")
-    print(fileData)
+        clientSock.send(ePort)
+          
+        dataSock.listen(1)
 
-    file = open("sentfile.txt", 'wb')
-    file.write(fileData)
+        fileSock, addr = dataSock.accept()
+        print ("socket accept\n")
 
-    # Close our side
-    clientSock.close()
-    file.close()
+        print ("Accepted file connection from client: ", addr)
+        print ("\n")
+
+        fileData = recvAll(fileSock, 1024)
+	
+        print ("The file data is: ")
+        print (fileData)
+
+        file = open("sentfile.txt", 'wb')
+        file.write(fileData)
+		
+        fileSock.close()
+        clientSock.close()
+        file.close()
+	
