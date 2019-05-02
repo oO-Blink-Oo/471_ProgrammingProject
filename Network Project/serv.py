@@ -99,4 +99,25 @@ while True:
         file.close()
 
     if bls in choice:
-        print(os.listdir())
+
+        dataSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        dataSock.bind(('', 0))
+
+        ePort = dataSock.getsockname()[1]
+        ePort = str(ePort).encode("utf-8")
+
+        clientSock.send(ePort)
+
+        dataSock.listen(1)
+
+        fileSock, addr = dataSock.accept()
+
+        print("Accepted file connection from client: ", addr)
+        print("\n")
+
+        #bList = os.listdir()
+        bList = str(os.listdir())
+        byteList = bList.encode("utf-8")
+        fileSock.send(byteList)
+
+        fileSock.close()

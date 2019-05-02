@@ -80,4 +80,13 @@ while True:
         bChoice = choice[0:2].encode("utf-8")
         connSock.send(bChoice)
 
+        ePort = connSock.recv(32)
+        ePort = int(ePort, 10)
+
+        fileSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        fileSock.connect((serverAddr, ePort))
+        fileData = fileSock.recv(1024)
+
+        print(fileData)
+
         print("Choice sent")
