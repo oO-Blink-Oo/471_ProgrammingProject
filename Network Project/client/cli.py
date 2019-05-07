@@ -55,7 +55,7 @@ while True:
         break
 
     # Get command
-    if "get" in choice:
+    elif "get" in choice:
 
         # Send choice to server
         bChoice = choice[0:3].encode("utf-8")
@@ -89,7 +89,7 @@ while True:
         fileSock.close()
 
     # Put command
-    if "put" in choice:
+    elif "put" in choice:
 
         # Send choice to server
         bChoice = choice[0:3].encode("utf-8")
@@ -101,38 +101,42 @@ while True:
         connSock.send(fileName)
         print("File name: ", fileName.decode("utf-8"))
 
-        # Open the file and read it
-        file = open(fileName, "rb")
-        fileData = file.read()
+        try:
 
-        # Send the file size to the server
-        fileSize = len(fileData)
-        connSock.send(str(fileSize).encode("utf-8"))
-        print("File size: ", fileSize, "bytes\n")
+			# Open the file and read it
+            file = open(fileName, "rb")
+            fileData = file.read()
 
-        # Receive ephemeral port number and connect to it
-        ePort = connSock.recv(32)
-        ePort = int(ePort, 10)
-        fileSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        fileSock.connect((serverAddr, ePort))
+			# Send the file size to the server
+            fileSize = len(fileData)
+            connSock.send(str(fileSize).encode("utf-8"))
+            print("File size: ", fileSize, "bytes\n")
 
-        # Initialize number of bytes sent
-        numSent = 0
+			# Receive ephemeral port number and connect to it
+            ePort = connSock.recv(32)
+            ePort = int(ePort, 10)
+            fileSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            fileSock.connect((serverAddr, ePort))
 
-        # Loop over the whole file size
-        while numSent < fileSize:
+			# Initialize number of bytes sent
+            numSent = 0
 
-            # Send 65536 bytes of data at a time
-            fileBuf = fileData[numSent:numSent+65536]
-            fileSock.send(fileBuf)
-            numSent += 65536
+			# Loop over the whole file size
+            while numSent < fileSize:
 
-        # Close the file and data socket
-        file.close()
-        fileSock.close()
+				# Send 65536 bytes of data at a time
+        	    fileBuf = fileData[numSent:numSent+65536]
+        	    fileSock.send(fileBuf)
+        	    numSent += 65536
+
+			# Close the file and data socket
+            file.close()
+            fileSock.close()
+        except FileNotFoundError:
+        	print("File Not Found")
 
     # ls command
-    if choice == "ls":
+    elif choice == "ls":
 
         # Send choice to server
         bChoice = choice[0:2].encode("utf-8")
@@ -147,3 +151,8 @@ while True:
         # Receive the data and print it
         fileData = fileSock.recv(1024)
         print(fileData.decode("utf-8"))
+    else:
+	# Send choice to server
+        bChoice = choice[0:3].encode("utf-8")
+        connSock.send(bChoice)
+        print("Command not recognized")

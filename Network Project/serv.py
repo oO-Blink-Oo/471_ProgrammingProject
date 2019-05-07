@@ -64,48 +64,51 @@ while True:
         break
 
     # Get command
-    if bget in choice:
+    elif bget in choice:
 
         # Receive the file name
         fileName = clientSock.recv(1024)
 
-        # Open the file and read it
-        file = open(fileName, 'rb')
-        fileData = file.read()
+        try:
+            # Open the file and read it
+            file = open(fileName, 'rb')
+            fileData = file.read()
 
-        # Send the file size to the server
-        fileSize = len(fileData)
-        clientSock.send(str(fileSize).encode("utf-8"))
+            # Send the file size to the server
+            fileSize = len(fileData)
+            clientSock.send(str(fileSize).encode("utf-8"))
 
-        # Create the ephemeral port and send the port number to the client
-        dataSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        dataSock.bind(('', 0))
-        ePort = dataSock.getsockname()[1]
-        ePort = str(ePort).encode("utf-8")
-        clientSock.send(ePort)
+            # Create the ephemeral port and send the port number to the client
+            dataSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            dataSock.bind(('', 0))
+            ePort = dataSock.getsockname()[1]
+            ePort = str(ePort).encode("utf-8")
+            clientSock.send(ePort)
 
-        # Listen and accept the connection
-        dataSock.listen(1)
-        fileSock, addr = dataSock.accept()
+            # Listen and accept the connection
+            dataSock.listen(1)
+            fileSock, addr = dataSock.accept()
 
-        # Initialize number of bytes sent
-        numSent = 0
+            # Initialize number of bytes sent
+            numSent = 0
 
-        # Loop over the whole file size
-        while numSent < fileSize:
+            # Loop over the whole file size
+            while numSent < fileSize:
 
-            # Send 65536 bytes of data at a time
-            fileBuf = fileData[numSent:numSent+65536]
-            fileSock.send(fileBuf)
-            numSent += 65536
+                # Send 65536 bytes of data at a time
+                fileBuf = fileData[numSent:numSent+65536]
+                fileSock.send(fileBuf)
+                numSent += 65536
 
-        # Close the file and data socket and print success message
-        fileSock.close()
-        file.close()
-        print("Get success\n")
+            # Close the file and data socket and print success message
+            fileSock.close()
+            file.close()
+            print("Get success\n")
+        except FileNotFoundError:
+	        print("File Not Found")
 
     # Put command
-    if bput in choice:
+    elif bput in choice:
 
         # Receive the file name
         fileName = clientSock.recv(1024)
@@ -137,7 +140,7 @@ while True:
         print("Put success\n")
 
     # ls command
-    if bls in choice:
+    elif bls in choice:
 
         # Create the ephemeral port and send the port number to the client
         dataSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -158,3 +161,5 @@ while True:
         # Close the data socket and print success message
         fileSock.close()
         print("ls success\n")
+    else:
+	    print("Command not identified")
