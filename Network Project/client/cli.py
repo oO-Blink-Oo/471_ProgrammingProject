@@ -69,47 +69,55 @@ while True:
 
         # Receive the file size
         fileSize = connSock.recv(1024)
-        print("File size: ", fileSize.decode("utf-8"), "bytes\n")
+        if "XX".encode("utf-8") in fileSize:
+            print("File not found in Server Directory")
+        else:			
+            print("File size: ", fileSize.decode("utf-8"), "bytes\n")
 
-        # Receive ephemeral port number and connect to it
-        ePort = connSock.recv(32)
-        ePort = int(ePort, 10)
-        fileSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        fileSock.connect((serverAddr, ePort))
+            # Receive ephemeral port number and connect to it
+            ePort = connSock.recv(32)
+            ePort = int(ePort, 10)
+            fileSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            fileSock.connect((serverAddr, ePort))
 
-        # Get all the file data
-        fileData = recvAll(fileSock, int(fileSize))
+            # Get all the file data
+            fileData = recvAll(fileSock, int(fileSize))
 
-        # Open the file and write the data to it
-        file = open(fileName, 'wb')
-        file.write(fileData.encode("utf-8"))
+            # Open the file and write the data to it
+            file = open(fileName, 'wb')
+            file.write(fileData.encode("utf-8"))
 
-        # Close the file and data socket
-        file.close()
-        fileSock.close()
+            # Close the file and data socket
+            file.close()
+            fileSock.close()
 
     # Put command
     elif "put" in choice:
 
         # Send choice to server
-        bChoice = choice[0:3].encode("utf-8")
-        connSock.send(bChoice)
-
-        # Send file name to server
+		
         fileName = choice[4:]
         fileName = fileName.encode("utf-8")
-        connSock.send(fileName)
         print("File name: ", fileName.decode("utf-8"))
 
         try:
 
 			# Open the file and read it
             file = open(fileName, "rb")
+			
+            bChoice = choice[0:3].encode("utf-8")
+            connSock.send(bChoice)
+			
+			# Send file name to server
+            connSock.send(fileName)
+			
             fileData = file.read()
-
+			
+			
 			# Send the file size to the server
             fileSize = len(fileData)
             connSock.send(str(fileSize).encode("utf-8"))
+			
             print("File size: ", fileSize, "bytes\n")
 
 			# Receive ephemeral port number and connect to it
@@ -133,7 +141,9 @@ while True:
             file.close()
             fileSock.close()
         except FileNotFoundError:
-        	print("File Not Found")
+            bChoice = "XX".encode("utf-8")
+            connSock.send(bChoice)
+            print("File Not Found")
 
     # ls command
     elif choice == "ls":

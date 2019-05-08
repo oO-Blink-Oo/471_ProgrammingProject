@@ -54,6 +54,7 @@ while True:
     bget = "get".encode("utf-8")
     bquit = "quit".encode("utf-8")
     bls = "ls".encode("utf-8")
+    bXX = "XX".encode("utf-8")
 
     # Quit command
     if bquit in choice:
@@ -105,16 +106,22 @@ while True:
             file.close()
             print("Get success\n")
         except FileNotFoundError:
-	        print("File Not Found")
+            clientSock.send(bXX) 		    
+            print("File Not Found")
 
     # Put command
     elif bput in choice:
-
+		
+        
+		
         # Receive the file name
         fileName = clientSock.recv(1024)
+        print("File Name ", fileName.decode("utf-8"))		
 
         # Receive the file size
         fileSize = clientSock.recv(1024)
+        print("File Size: ", fileSize.decode("utf-8"))
+		
 
         # Create the ephemeral port and send the port number to the client
         dataSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -161,5 +168,7 @@ while True:
         # Close the data socket and print success message
         fileSock.close()
         print("ls success\n")
+    elif bXX in choice:
+	    print("File Not Found In Client Directory")
     else:
 	    print("Command not identified")
