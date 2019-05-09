@@ -1,8 +1,8 @@
 Joshua Gomberg
 jgomberg@csu.fullerton.edu
 
-Name
-Email
+Ian Michael Jesu Alvarez
+ian_alvarez23@csu.fullerton.edu
 
 Name
 Email
