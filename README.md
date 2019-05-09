@@ -7,9 +7,6 @@ ian_alvarez23@csu.fullerton.edu
 Juan Sanchez  
 juan1sanchez@csu.fullerton.edu
 
-Name  
-Email
-
 Language: Python  
 
 How to execute: Run the server file as: python serv.py PORTNUMBER  
