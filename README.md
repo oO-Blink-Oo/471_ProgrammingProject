@@ -4,7 +4,7 @@ jgomberg@csu.fullerton.edu
 Ian Michael Jesu Alvarez  
 ian_alvarez23@csu.fullerton.edu
 
-Juan Sanchez
+Juan Sanchez  titanium 
 juan1sanchez@csu.fullerton.edu
 
 Name  
