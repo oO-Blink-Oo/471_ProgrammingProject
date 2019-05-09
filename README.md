@@ -9,10 +9,10 @@ Email
 
 Language: Python  
 
-How to execute: Run the server file as: python serv.py <PORT NUMBER>  
-                Run the client file as: cli <server machine> <server port>  
-                Client commands: ftp> get <file name> (downloads file <file name> from the server)  
-                                ftp> put <filename> (uploads file <file name> to the server)  
+How to execute: Run the server file as: python serv.py PORTNUMBER  
+                Run the client file as: cli servermachine serverport  
+                Client commands: ftp> get filename (downloads file <file name> from the server)  
+                                ftp> put filename (uploads file <file name> to the server)  
                                 ftp> ls (lists files on the server)  
                                 ftp> quit (disconnects from the server and exits)  
   
